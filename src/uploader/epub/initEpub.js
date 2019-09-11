@@ -30,7 +30,7 @@ export async function initEpub(context) {
     {
       type: "LinkedResource",
       rel: ["alternate"],
-      url: "original.opf",
+      url: opfPath,
       encodingFormat: "application/oebps-package+xml"
     }
   );
@@ -45,7 +45,7 @@ export async function initEpub(context) {
     file: new window.File([opf], "original.opf", {
       type: "application/oebps-package+xml"
     }),
-    documentPath: "original.opf",
+    documentPath: opfPath,
     mediaType: "application/oebps-package+xml",
     json: {}
   });

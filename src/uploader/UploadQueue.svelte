@@ -1,6 +1,6 @@
 <script>
   // your script goes here
-  export let queue
+  export let queue;
 </script>
 
 <style>
@@ -26,17 +26,16 @@
 
 <details class="UploadQueue">
   <summary>
-{#if $queue.length === 1}
-Uploading {$queue.length} file
-{:else if  $queue.length !== 0}
-Uploading {$queue.length} files
-{:else}
-Upload queue is empty
-{/if}</summary>
-     <ol>
-  {#each $queue as file}
-     <!-- content here -->
-     <li>file.name</li>
-  {/each}
-     </ol>
+    {#if $queue.length === 1}
+      Uploading {$queue.length} file
+    {:else if $queue.length !== 0}
+      Uploading {$queue.length} files
+    {:else}Upload queue is empty{/if}
+  </summary>
+  <ol>
+    {#each $queue as file}
+      <!-- content here -->
+      <li>{file.name}</li>
+    {/each}
+  </ol>
 </details>

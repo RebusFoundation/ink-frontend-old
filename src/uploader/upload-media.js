@@ -1,29 +1,35 @@
-import queue from "async-es/queue";
+
 import { fetchWrap } from "../api/fetch-wrap.js";
 
 export async function uploadMedia(doc) {
   const { book, media } = await doc;
-  const uploadQueue = queue(uploadData(doc), 5);
+  const uploader = uploadData(doc);
+  const response = await window.fetch("/api/whoami", {
+    credentials: "include"
+  });
+  const { user } = await response.json();
   for (const item of media) {
-    uploadQueue.push(item);
+    await uploader(item, user);
   }
   const mediaPaths = media.map(item => item.documentPath);
   for (const item of book.resources) {
     if (!mediaPaths.includes(item.url)) {
-      uploadQueue.push({
-        documentPath: item.url,
-        mediaType: item.encodingFormat,
-        json: {}
-      });
+      await uploader(
+        {
+          documentPath: item.url,
+          mediaType: item.encodingFormat,
+          json: {}
+        },
+        user
+      );
     }
   }
-  await uploadQueue.drain();
   return book;
 }
 
 function uploadData(doc) {
   const { zip, book } = doc;
-  return async function uploader(item) {
+  return async function uploader(item, user) {
     if (
       item.mediaType.includes("javascript") ||
       item.mediaType.includes("jscript") ||
@@ -47,7 +53,7 @@ function uploadData(doc) {
       data.append("documentPath", item.documentPath);
       data.append("mediaType", item.mediaType);
       data.append("json", JSON.stringify(item.json));
-      return upload(data, `${book.id}file-upload`);
+      return upload(data, `${book.id}/file-upload`, user);
     } catch (err) {
       console.error(err);
       err.httpMethod = "Parser";
@@ -56,19 +62,19 @@ function uploadData(doc) {
   };
 }
 
-async function upload(payload, endpoint) {
-  const user = window._session.user
+async function upload(payload, endpoint, user) {
   try {
     const response = await fetchWrap(endpoint, {
       credentials: "include",
       method: "POST",
       body: payload,
-      headers: new global.Headers({
+      headers: new window.Headers({
         Authorization: `Bearer ${user.token}`
       })
     });
     return response.json();
   } catch (err) {
+    console.error("upload error: ", err, err.status, err.response);
     err.httpMethod = "POST/Upload Media";
     throw err;
   }

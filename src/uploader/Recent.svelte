@@ -1,7 +1,7 @@
 <script>
-  import List from '../library/List.svelte'
-  import Button from '../components/Button.svelte'
-  export let recent = {items: []}
+  import List from "../library/List.svelte";
+  import Button from "../components/Button.svelte";
+  export let recent = { items: [] };
 </script>
 
 <style>
@@ -13,14 +13,14 @@
     border-radius: 2rem;
     font-size: 0.7rem;
     color: var(--medium);
-    margin-bottom: 0.75rem;
+    margin-bottom: 1.75rem;
   }
   .Recent summary:hover {
     color: var(--hover);
     cursor: pointer;
   }
   .Recent {
-    position: relative
+    position: relative;
   }
   .Recent > :global(.Button) {
     position: absolute;

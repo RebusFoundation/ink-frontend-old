@@ -1,9 +1,9 @@
 <script>
   // your script goes here
-  import Book from '../src/components/Book.svelte'
-  import { setContext } from 'svelte'
-  const bookId = 'stories/preview-data/bookdemo/index.json'
-  const bookPath = 'demo.xhtml'
+  import Book from "../src/components/Book.svelte";
+  import { setContext } from "svelte";
+  const bookId = "stories/preview-data/bookdemo/index.json";
+  const bookPath = "demo.xhtml";
 </script>
 
 <style>
@@ -11,4 +11,4 @@
 </style>
 
 <!-- markup (zero or more items) goes here -->
-<Book bookId={bookId} bookPath={bookPath} />
+<Book {bookId} {bookPath} />

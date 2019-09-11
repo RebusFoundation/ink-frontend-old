@@ -17,10 +17,10 @@ export async function get(req, res, next) {
       // fs.writeFileSync('epub.css', style, 'utf8')
       return res.send(style);
     } catch (err) {
-      console.log('clean: ', err)
+      console.log("clean: ", err);
       next(err);
     }
   } else {
-    return res.sendStatus(403)
+    return res.sendStatus(403);
   }
 }

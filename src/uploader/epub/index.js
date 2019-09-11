@@ -25,9 +25,8 @@ export async function epub(file) {
   return uploaded;
 }
 
-async function addEpubToLibrary(contextPromise) {
-  const context = await contextPromise;
-  const created = await create(context.book);
-  context.book.id = created.id;
-  return context;
+async function addEpubToLibrary(init) {
+  const created = await create(init.book);
+  init.book.id = created.object.id;
+  return init;
 }

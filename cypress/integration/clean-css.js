@@ -4,7 +4,10 @@
 describe("Sanitize CSS", () => {
   beforeEach(() => {
     cy.visit("/");
-    cy.visit('/login', {auth: {username: 'testuserprofile', password: 'devpassword'}, method: 'POST'})
+    cy.visit("/login", {
+      auth: { username: "testuserprofile", password: "devpassword" },
+      method: "POST"
+    });
   });
 
   it("basic CSS sanitisation", () => {

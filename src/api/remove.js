@@ -1,7 +1,12 @@
 import { fetchWrap, get } from "./fetch-wrap.js";
 import { getToken } from "./get-cookie.js";
 
-export async function create(payload) {
+export async function removeMany(payloads) {
+  const results = payloads.map(payload => remove(payload))
+  return Promise.all(results)
+}
+
+export async function remove(payload) {
   const response = await window.fetch("/api/whoami", {
     credentials: "include"
   });
@@ -15,7 +20,7 @@ export async function create(payload) {
           "https://www.w3.org/ns/activitystreams",
           { reader: "https://rebus.foundation/ns/reader" }
         ],
-        type: "Create",
+        type: "Delete",
         object: payload
       }),
       headers: new window.Headers({

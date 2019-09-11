@@ -1,4 +1,5 @@
 <script>
+
 </script>
 
 <style>
@@ -27,9 +28,10 @@
     color: #32a5a5;
     color: var(--rc-dark);
   }
-  .Toolbar-title, .Toolbar-title > :global(span) {
+  .Toolbar-title,
+  .Toolbar-title > :global(span) {
     text-transform: uppercase;
-    font-size: .75rem;
+    font-size: 0.75rem;
     font-weight: 700;
     color: #555;
     color: var(--medium);
@@ -53,9 +55,26 @@
 
 <!-- markup (zero or more items) goes here -->
 <nav class="Toolbar">
-  <slot name="left-button"><a href="/" class="Toolbar-link"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a></slot>
+  <slot name="left-button">
+    <a href="/" class="Toolbar-link">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="square"
+        stroke-linejoin="round">
+        <path d="M15 18l-6-6 6-6" />
+      </svg>
+    </a>
+  </slot>
   <div class="Toolbar-title">
-    <slot name="toolbar-title"></slot>
+    <slot name="toolbar-title" />
   </div>
-  <div class="Toolbar-rightbutton"><slot name="right-button"></slot></div>
+  <div class="Toolbar-rightbutton">
+    <slot name="right-button" />
+  </div>
 </nav>

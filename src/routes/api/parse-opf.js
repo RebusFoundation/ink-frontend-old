@@ -26,6 +26,6 @@ export async function get(req, res, next) {
       next(err);
     }
   } else {
-    return res.sendStatus(403)
+    return res.sendStatus(403);
   }
 }

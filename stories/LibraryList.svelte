@@ -1,14 +1,14 @@
 <script>
-  import List from '../src/library/List.svelte'
+  import List from "../src/library/List.svelte";
   // your script goes here
-  export let layout
-  export let list
+  export let layout;
+  export let list;
 </script>
 
 <style>
   /* your styles go here */
 </style>
 
-<List layout={layout} list={list} />
+<List {layout} {list} />
 
 <!-- markup (zero or more items) goes here -->

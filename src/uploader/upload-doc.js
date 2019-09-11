@@ -10,6 +10,7 @@ importQueue.drain(() => {
 });
 importQueue.error((err, task) => {
   console.error(err);
+  set([]);
 });
 async function create(file) {
   // file can either be an actual file or an object describing an Article with a type: 'Article'
@@ -19,7 +20,7 @@ async function create(file) {
     case "application/epub+zip":
       return epub(file);
     default:
-      break;
+      return Promise.reject(new Error("Unsupported format"));
   }
 }
 async function upload(file) {
@@ -31,15 +32,20 @@ async function upload(file) {
       return [...set];
     });
     return book;
+  } else {
+    throw new Error("No book created");
   }
 }
 function add(file) {
   update(files => {
     const set = new Set(files);
-    set.ad(file);
+    set.add(file);
     return [...set];
   });
-  importQueue.push(file);
+  importQueue.push(file, function(err) {
+    console.log(err);
+    set([]);
+  });
 }
 
 export const uploadQueue = {

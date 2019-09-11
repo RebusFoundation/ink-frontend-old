@@ -4,7 +4,10 @@
 describe("Sanitize and parse chapter", () => {
   beforeEach(() => {
     cy.visit("/");
-    cy.visit('/login', {auth: {username: 'testuserprofile', password: 'devpassword'}, method: 'POST'})
+    cy.visit("/login", {
+      auth: { username: "testuserprofile", password: "devpassword" },
+      method: "POST"
+    });
   });
 
   it("Chapter parsing and sanitisation", () => {

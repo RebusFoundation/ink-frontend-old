@@ -3,7 +3,7 @@ import { create } from "../api/create.js";
 
 export async function createPDF(file) {
   let book = { type: "Publication", links: [], json: {} };
-  const canvas = document.getElementById("import-pdf-cover-page")
+  const canvas = document.getElementById("import-pdf-cover-page");
   const fileArray = await fileToArrayBuffer(file);
   const loadingTask = window.pdfjsLib.getDocument({
     data: fileArray,

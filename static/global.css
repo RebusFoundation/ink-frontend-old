@@ -358,36 +358,37 @@ body#body {
   margin: 0;
   padding: 0;
 }
-::-webkit-scrollbar-track {
+/* Should be moved into a stylesheet that's only loaded in reader view */
+body#reader::-webkit-scrollbar-track {
   background-color: transparent;
   border-radius: 0;
   border: none;
 }
-::-webkit-scrollbar-corner {
+body#reader::-webkit-scrollbar-corner {
   background: transparent;
 }
-::-webkit-scrollbar {
+body#reader::-webkit-scrollbar {
   width: 1rem;
   height: 0.25rem;
   background-color: transparent;
 }
 
-::-webkit-scrollbar-thumb {
+body#reader::-webkit-scrollbar-thumb {
   background-color: rgba(100, 100, 100, 0.3);
   border: none;
 }
 
-::-webkit-scrollbar-track:hover {
+body#reader::-webkit-scrollbar-track:hover {
   background-color: rgba(200, 200, 200, 0.25);
 }
-::-webkit-scrollbar-track:active {
+body#reader::-webkit-scrollbar-track:active {
   background-color: rgba(170, 170, 170, 0.5);
 }
-::-webkit-scrollbar-thumb:hover {
+body#reader::-webkit-scrollbar-thumb:hover {
   background-color: rgba(100, 100, 100, 0.45);
   cursor: pointer;
 }
-::-webkit-scrollbar-thumb:active {
+body#reader::-webkit-scrollbar-thumb:active {
   background-color: rgba(100, 100, 100, 0.65);
 }
 
@@ -448,9 +449,8 @@ a {
 }
 a:focus {
   background-color: var(--rc-lighter);
-  box-shadow: 0 0 0 5px var(--rc-lighter);
+  box-shadow: 0 0 0 2px var(--rc-lighter);
   outline: solid transparent;
-  animation: outlinePop 0.25s ease-in-out;
 }
 
 a:link:active {

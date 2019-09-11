@@ -1,5 +1,5 @@
 <script>
-  import Upload from '../src/uploader/Upload.svelte'
+  import Upload from "../src/uploader/Upload.svelte";
 </script>
 
 <style>

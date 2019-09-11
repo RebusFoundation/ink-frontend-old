@@ -34,7 +34,11 @@ export function setup(node, options) {
   if (!window) return;
   if (!documentSetup) {
     document.body.addEventListener("click", event => {
-      if (activeModal && !activeModal.contains(event.target)) {
+      if (
+        activeModal &&
+        !activeModal.contains(event.target) &&
+        !event.target.dataset.noClose
+      ) {
         closer();
       }
     });
@@ -59,7 +63,6 @@ function once(emitter, eventName) {
   if (!emitter) return;
   return new Promise(resolve => {
     function listener(event) {
-      console.log("animation done");
       resolve(event);
     }
     emitter.addEventListener(eventName, listener, { once: true });
@@ -111,14 +114,15 @@ export function scrollBehaviour(toggle) {
 
 export function click(event) {
   if (activeModal) {
-    if (event.target.hasAttribute("data-close-modal")) {
+    if (event.target.closest("[data-close-modal]")) {
       closer();
-      event.preventDefault();
+      if (!event.target.closest('[role="dialog"]')) {
+        event.preventDefault();
+      }
     }
   }
 }
 let activeElement;
-let popper;
 
 export async function opener(props) {
   const { id } = props;
@@ -179,7 +183,6 @@ export async function closer() {
   modal.set(null);
   // doc.classList.add("is-closing");
   await once(doc, "outroend");
-  console.log("after close");
   // doc.classList.remove("is-closing");
   node.setAttribute("aria-hidden", "true");
   node.setAttribute("hidden", "true");
