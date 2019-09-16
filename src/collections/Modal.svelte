@@ -46,15 +46,23 @@
   }
   function submitDelete(event) {
     event.preventDefault();
-    const form = event.target
-    const tags = Array.from(form.querySelectorAll('input:checked')).map(node => node.value)
-    const deleted = $collections.filter(item => tags.includes(item.name))
-    if (window.confirm(`Are you sure you want to permanently delete the selected collections? This action cannot be undone.`)) {
+    const form = event.target;
+    const tags = Array.from(form.querySelectorAll("input:checked")).map(
+      node => node.value
+    );
+    const deleted = $collections.filter(item => tags.includes(item.name));
+    if (
+      window.confirm(
+        `Are you sure you want to permanently delete the selected collections? This action cannot be undone.`
+      )
+    ) {
       removeMany(deleted).then(() => {
         deleting = false;
-        collections.update(list => list.filter(item => !tags.includes(item.name)));
+        collections.update(list =>
+          list.filter(item => !tags.includes(item.name))
+        );
         if (tags.includes(current)) {
-          goto('/collections/all')
+          goto("/collections/all");
         }
         return update();
       });
@@ -146,15 +154,16 @@
     max-width: 450px;
     width: 100%;
   }
-  ol a, label {
+  ol a,
+  label {
     text-decoration: none;
     display: block;
     padding: 0.25rem 1rem;
     border-radius: 0;
   }
   ol a.current {
-    background-color: #fefefe;
-    outline: 1px solid var(--rc-main);
+    background-color: #f3f3f3;
+    outline: 0.5px solid var(--rc-main);
   }
   .current span {
     font-weight: bold;
@@ -227,26 +236,33 @@
       </button>
       <h1>Collections</h1>
       {#if deleting}
-      <form class="Deleting" on:submit={event => submitDelete(event)}>
-            <div class="FormRow">
-              <TextButton
-                noClose={true}
-                click={event => {
-                  deleting = false;
-                }}>
-                Cancel
-              </TextButton>
-              <Button noClose={true} warning>Delete</Button>
-            </div>
+        <form class="Deleting" on:submit={event => submitDelete(event)}>
+          <div class="FormRow">
+            <TextButton
+              noClose={true}
+              click={event => {
+                deleting = false;
+              }}>
+              Cancel
+            </TextButton>
+            <Button noClose={true} warning>Delete</Button>
+          </div>
 
           <ol class="Tags">
             {#each $collections as tag}
-              <li><label 
-                  class:item={true} for="{tag.name}"><input type="checkbox" id="{tag.name}" value="{tag.name}" name="tag"> {tag.name}</label>
+              <li>
+                <label class:item={true} for={tag.name}>
+                  <input
+                    type="checkbox"
+                    id={tag.name}
+                    value={tag.name}
+                    name="tag" />
+                  {tag.name}
+                </label>
               </li>
             {/each}
           </ol>
-          </form>
+        </form>
       {:else}
         {#if creating}
           <form class="Creating" on:submit={event => submitForm(event)}>
@@ -267,10 +283,14 @@
         <ol>
           {#if !creating}
             <li class="ButtonRow">
-              <TextButton warning={true} click={() => {
-                deleting = true
-              }}
-                noClose={true}>Delete</TextButton>
+              <TextButton
+                warning={true}
+                click={() => {
+                  deleting = true;
+                }}
+                noClose={true}>
+                Delete
+              </TextButton>
               <Button
                 click={event => {
                   creating = true;

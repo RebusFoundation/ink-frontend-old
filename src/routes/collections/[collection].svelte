@@ -6,7 +6,9 @@
       let books = { items: [] };
       if (session.profile) {
         books = await this.fetch(
-          `/api/collections?collection=${collection}&page=1&orderBy=${orderBy}&reverse=${reverse}`,
+          `/api/collections?collection=${encodeURIComponent(
+            collection
+          )}&page=1&orderBy=${orderBy}&reverse=${reverse}`,
           {
             credentials: "include"
           }
@@ -110,7 +112,7 @@
         .then(response => response.json());
       order.page = order.page + 1;
       items = items.concat(libraryAdditions.items);
-      if (libraryAdditions.totalItems === items.length) {
+      if (libraryAdditions.done) {
         hideLoadMore = true;
       }
     } catch (err) {
@@ -126,7 +128,8 @@
         }
       },
       {
-        rootMargin: "0px 0px 50% 0px"
+        rootMargin: "0px 0px 30px 0px",
+        threshold: [0, 0.25, 0.5, 0.75, 1]
       }
     );
   }

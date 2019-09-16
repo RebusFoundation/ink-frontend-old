@@ -43,9 +43,17 @@ export async function chapterToJSON(
   let h1 = 0;
   let h2 = 0;
   const order = parseInt(index, 10) + 1;
-  const dom = new JSDOM(chapter, {
-    contentType
-  });
+  let dom;
+  try {
+    dom = new JSDOM(chapter, {
+      contentType
+    });
+  } catch (err) {
+    console.log(err);
+    dom = new JSDOM(chapter, {
+      contentType: "text/html"
+    });
+  }
   const window = dom.window;
   const stylesheets = Array.from(
     window.document.querySelectorAll('link[rel="stylesheet"]')
@@ -174,12 +182,15 @@ export async function chapterToJSON(
       }
     }
     if (node.hasAttribute("src")) {
-      node.setAttribute("src", getPath(node.getAttribute("src"), chapterPath));
+      node.setAttribute(
+        "src",
+        assetPath(node.getAttribute("src"), chapterPath)
+      );
     }
     if (node.hasAttribute("href")) {
       node.setAttribute(
         "href",
-        getPath(node.getAttribute("href"), chapterPath)
+        linkPath(node.getAttribute("href"), chapterPath)
       );
     }
   });
@@ -207,12 +218,16 @@ export async function chapterToJSON(
   return result;
 }
 
-function getPath(path, opfPath) {
-  const opf = new URL(opfPath, "http://example.com/");
-  // If host is example.com, then this is a local request.
-  if (opf.hostname === "example.com") {
-    return new URL(decodeURIComponent(path), opf).pathname + opf.hash;
-  } else {
-    return new URL(decodeURIComponent(path), opf).href;
-  }
+function getPath(path, base) {
+  return new URL(path, base).href;
+}
+
+function assetPath(path, base) {
+  const url = new URL(path, base).href;
+  return `/assets/${encodeURIComponent(url)}`;
+}
+
+function linkPath(path, base) {
+  const url = new URL(path, base);
+  return `/doc/${url.pathname}${url.hash}`;
 }

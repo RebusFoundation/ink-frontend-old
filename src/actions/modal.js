@@ -6,6 +6,7 @@ let activeModal;
 modal.subscribe(value => {
   activeModal = value;
 });
+let scroll;
 
 // Actions
 export function open(node, options) {
@@ -158,11 +159,13 @@ export async function opener(props) {
     }
   }
   activeElement = document.activeElement;
+
   scrollBehaviour("disable");
   node.setAttribute("aria-hidden", "false");
   node.removeAttribute("hidden");
   node.classList.add("is-open");
   modal.set(node);
+
   await once(doc, "introend");
   const autofocus =
     node.querySelector("[autofocus]") || node.querySelector("[data-autofocus]");
@@ -172,6 +175,7 @@ export async function opener(props) {
   } else {
     focusTarget = node;
   }
+  scroll = { top: window.scrollY, left: window.scrollX };
   window.requestAnimationFrame(() => {
     focusTarget.focus();
   });
@@ -182,10 +186,12 @@ export async function closer() {
   const doc = node.querySelector('[role="document"]');
   modal.set(null);
   // doc.classList.add("is-closing");
+
   await once(doc, "outroend");
   // doc.classList.remove("is-closing");
   node.setAttribute("aria-hidden", "true");
   node.setAttribute("hidden", "true");
+
   scrollBehaviour("enable");
   node.classList.remove("is-open");
   node.parentElement.classList.remove("js-modal-open");
@@ -213,6 +219,7 @@ export async function closer() {
   window.requestAnimationFrame(() => {
     if (activeElement) {
       activeElement.focus();
+      window.scrollTo(scroll);
       activeElement = null;
     }
   });

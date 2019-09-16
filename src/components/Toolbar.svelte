@@ -17,6 +17,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    height: 32px;
   }
   .Toolbar-link {
     font-size: 1.25rem;
@@ -43,6 +44,23 @@
     font-size: 0.75rem;
     text-transform: uppercase;
     text-decoration: none;
+
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    text-align: center;
+    white-space: nowrap;
+    text-decoration: none;
+    display: inline-block;
+
+    color: var(--link);
+    border: none;
+    background-color: transparent;
+  }
+  :global(.Toolbar .Toolbar-link:hover) {
+    color: var(--hover);
   }
   :global(.Toolbar-link svg) {
     vertical-align: middle;

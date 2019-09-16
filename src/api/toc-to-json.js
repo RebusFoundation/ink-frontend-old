@@ -1,5 +1,7 @@
 const cheerio = require("cheerio");
 
+const PREFIX = "/doc";
+
 const options = {
   withDomLvl1: true,
   normalizeWhitespace: false,
@@ -49,10 +51,10 @@ function parseListItem(i, element, toc, $) {
   const child = {
     children: []
   };
-  if (item.find("> a")) {
+  if (item.find("> a").length !== 0) {
     child.label = item.find("> a").text();
     child.url = item.find("> a").attr("href");
-  } else if (item.find("> span")) {
+  } else if (item.find("> span").length !== 0) {
     child.label = item.find("> span").text();
   }
   const children = item.find("> ol > li");
@@ -92,11 +94,7 @@ function parseNavPoint(i, element, toc, $) {
 
 function getPath(path, opfPath) {
   const opf = new URL(opfPath, "http://example.com/");
-  // If host is example.com, then this is a local request.
-  if (opf.hostname === "example.com") {
-    const url = new URL(path, opf);
-    return url.pathname + url.hash;
-  } else {
-    return new URL(path, opf).href;
-  }
+  // If host is example.com, then this is a local request
+  const url = new URL(path, opf);
+  return PREFIX + url.pathname + url.hash;
 }

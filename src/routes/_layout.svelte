@@ -6,6 +6,7 @@
   import { profile } from "../routes/_profile.js";
   import Modal from "../collections/Modal.svelte";
   import ItemActions from "../library/ItemActions.svelte";
+  import ContentsModal from "../doc/ContentsModal.svelte";
   export let segment;
 </script>
 
@@ -26,6 +27,7 @@
 <Profile />
 <Modal />
 <ItemActions />
+<ContentsModal />
 
 {#if !$profile.loading}
   <main>

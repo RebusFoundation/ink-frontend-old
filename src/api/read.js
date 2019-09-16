@@ -1,12 +1,7 @@
 import { fetchWrap, get } from "./fetch-wrap.js";
 import { getToken } from "./get-cookie.js";
 
-export async function removeMany(payloads) {
-  const results = payloads.map(payload => remove(payload));
-  return Promise.all(results);
-}
-
-export async function remove(payload) {
+export async function read(context, location, path) {
   const response = await window.fetch("/api/whoami", {
     credentials: "include"
   });
@@ -20,21 +15,22 @@ export async function remove(payload) {
           "https://www.w3.org/ns/activitystreams",
           { reader: "https://rebus.foundation/ns/reader" }
         ],
-        type: "Delete",
-        object: payload
+        type: "Read",
+        context,
+        "oa:hasSelector": {
+          type: "reader:Location",
+          location,
+          path
+        }
       }),
       headers: new window.Headers({
         "content-type": "application/ld+json",
         "csrf-token": csrfToken
       })
     });
-    const url = new URL(response.headers.get("location"), profile.outbox);
-    const reader = await get(
-      `/api/get?path=${encodeURIComponent(url.pathname)}`
-    );
-    return reader;
+    return response.headers.get("location");
   } catch (err) {
-    err.httpMethod = "POST/Create Profile";
+    err.httpMethod = "POST/Read";
     console.log("fetch error:", err);
     throw err;
   }

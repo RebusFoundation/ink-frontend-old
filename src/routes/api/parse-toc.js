@@ -1,32 +1,40 @@
-import * as fs from "fs";
+// import * as fs from "fs";
 import { parseToC } from "../../api/toc-to-json.js";
-import { getter } from "../../api/fetch.js";
+import got from "got";
 
 export async function get(req, res, next) {
-  const fetch = getter(req, res);
   if (req.user) {
     // Should use getter to always fetch, no url wrangling
     const file = req.query.toc;
-    const url = new URL(file, "http://example.com/");
-    const response = await fetch(file);
-    const body = await response.text();
+    const url = new URL(file, process.env.API_SERVER);
+    const redirect = await got.head(url.href, {
+      followRedirect: false,
+      headers: {
+        Authorization: `Bearer ${req.user.token}`
+      }
+    });
+    let body;
+    if (redirect.headers.location && redirect.statusCode === 302) {
+      const response = await got.get(redirect.headers.location, {
+        json: false
+      });
+      body = await response.body;
+    } else {
+      res.sendStatus(404);
+    }
     try {
       const toc = parseToC(
         body,
         url.hostname === "example.com" ? url.pathname : file
       );
-      if (file.includes("childrens-literature")) {
-        await fs.promises.writeFile(
-          "childrens-literature.json",
-          JSON.stringify(toc, null, 2)
-        );
-      }
-      if (file.includes("pg55456-images")) {
-        await fs.promises.writeFile(
-          "pg55456-images.json",
-          JSON.stringify(toc, null, 2)
-        );
-      }
+      // await fs.promises.writeFile(
+      //   "childrens-literature.json",
+      //   JSON.stringify(toc, null, 2)
+      // );
+      // await fs.promises.writeFile(
+      //   "childrens-literature.html",
+      //   body
+      // );
       return res.json(toc);
     } catch (err) {
       next(err);

@@ -148,17 +148,17 @@ StyleGuide 6.Button
 .Button--remove {
   font-size: 2rem;
 } */
-.Button.warning {
+  .Button.warning {
     background-color: var(--error);
     color: white;
-}
+  }
 </style>
 
 {#if href}
   <a
     class="Button"
     class:primary
-    class:warning={warning}
+    class:warning
     {hidden}
     {disabled}
     {href}
@@ -171,7 +171,7 @@ StyleGuide 6.Button
   <button
     class="Button"
     class:primary
-    class:warning={warning}
+    class:warning
     {hidden}
     {disabled}
     on:click={click}

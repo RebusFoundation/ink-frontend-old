@@ -1,7 +1,7 @@
 <script>
   import { modal, setup, open } from "../actions/modal.js";
   import { fly, fade } from "svelte/transition";
-  import InfoActions from "../components/InfoActions.svelte";
+  import BookContents from "./BookContents.svelte";
 </script>
 
 <style>
@@ -72,9 +72,9 @@
   }
 </style>
 
-<div class="Modal" use:setup id="item-modal" hidden>
+<div class="Modal" use:setup id="contents-modal" hidden>
 
-  {#if $modal && $modal.id === 'item-modal'}
+  {#if $modal && $modal.id === 'contents-modal'}
     <div role="document" transition:fade={{ duration: 100 }}>
       <button type="Button" data-close-modal class="Closer" data-autofocus>
         <svg
@@ -91,7 +91,7 @@
           <line x1="6" y1="6" x2="18" y2="18" />
         </svg>
       </button>
-      <InfoActions modal={true} />
+      <BookContents modal={true} />
     </div>
   {/if}
 </div>

@@ -27,11 +27,7 @@ export async function get(req, res, next) {
         response = await got.head(redirect.headers.location);
       }
       if (response.headers["content-type"].includes("svg")) {
-        const mainresponse = await got(url, {
-          headers: {
-            Authorization: `Bearer ${req.user.token}`
-          }
-        });
+        const mainresponse = await got(url);
         const dom = new JSDOM(mainresponse.body, {
           contentType: response.headers["content-type"]
         });

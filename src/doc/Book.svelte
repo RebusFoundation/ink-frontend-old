@@ -3,8 +3,8 @@
   import Chapter from "./Chapter.svelte";
   import ContentsButton from "./ContentsButton.svelte";
   import {
-    book,
-    chapter,
+    book as bookStore,
+    chapter as chapterStore,
     navigation,
     contents,
     currentLocation,
@@ -25,6 +25,16 @@
   if (bookBody) {
     bookBody.style.setProperty("--reader-font-size", $fontSize);
   }
+  export let book;
+  export let chapter;
+  if (book) {
+    bookStore.set(book);
+  }
+  if (chapter) {
+    chapterStore.set(chapter);
+  }
+  let scrollY;
+  $: console.log(scrollY);
 </script>
 
 <style>
@@ -34,19 +44,22 @@
   }
 </style>
 
+<svelte:window bind:scrollY />
 <svelte:head>
-  {#if $chapter.stylesheets.length !== 0}
-    {#each $chapter.stylesheets as sheet}
-      <link rel="stylesheet" href={sheet} />
+  {#if chapter.stylesheets.length !== 0}
+    {#each chapter.stylesheets as sheet}
+      <link
+        rel="stylesheet"
+        href={`/api/clean-css?css=${encodeURIComponent(sheet)}`} />
     {/each}
   {/if}
-  <title>{$book.name} - {$chapterTitle} - Rebus Ink</title>
+  <title>{book.name} - {$chapterTitle} - Rebus Ink</title>
 </svelte:head>
 
-{#if $book}
+{#if book}
   <div class="BookBody" bind:this={bookBody}>
     <!-- Should have all chapters appear, they should get values from stores and only use props for chapter assignments. Only when props match store is the chapter rendered -->
-    {#each $book.readingOrder as chapter, index}
+    {#each book.readingOrder as chapter, index}
       <Chapter
         on:current={handleCurrent}
         on:appearing={handleAppearing}

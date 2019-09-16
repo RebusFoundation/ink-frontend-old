@@ -1,28 +1,80 @@
 <script>
   // your script goes here
+  import { open } from "../actions/modal.js";
+  import { createEventDispatcher } from "svelte";
+  const dispatch = createEventDispatcher();
   export let current;
   export let chapters;
+  export let width;
   let scroll;
   let height;
 </script>
 
 <style>
-  /* your styles go here */
+  svg {
+    width: 12px;
+    height: 12px;
+    fill: #999;
+  }
+  .current {
+    fill: var(--rc-darker);
+  }
+  a.Toolbar-link.Progress,
+  button.Toolbar-link.Progress {
+    /* position: fixed;
+    top: 40px;
+    left: 13px; */
+    width: 24px;
+    display: flex;
+    flex-direction: column;
+    padding: 0.25rem;
+    align-items: center;
+  }
+  @media (min-width: 1024px) {
+    .Progress {
+      left: calc(var(--reader-sidebar-width, 0px) + 13px);
+    }
+  }
 </style>
 
-<svelte:window bind:scrollY={scroll} bind:innerHeight={height} />
-{#if chapters}
-  {#each chapters as chapter}
-    <!-- content here -->
-    {#if chapter.url === current}
-      <!-- content here -->
-      <div class="Current" data-scroll={scroll} data-height={height}>
-        &nbsp;
-      </div>
-    {:else}
-      <svg height="8" width="8">
-        <circle cx="4" cy="4" r="4" stroke-width="0" fill="grey" />
-      </svg>
+{#if width <= 1024}
+  <button
+    type="Button"
+    use:open={{ id: 'contents-modal' }}
+    class="Toolbar-link Progress">
+    {#if chapters}
+      {#each chapters as chapter, i}
+        <!-- content here -->
+        {#if i === current}
+          <svg class="current">
+            <circle cx="6" cy="6" r="3" />
+          </svg>
+        {:else}
+          <svg>
+            <circle cx="6" cy="6" r="2" />
+          </svg>
+        {/if}
+      {/each}
     {/if}
-  {/each}
+  </button>
+{:else}
+  <button
+    on:click={() => dispatch('toggle-sidebar')}
+    href="/"
+    class="Toolbar-link Progress">
+    {#if chapters}
+      {#each chapters as chapter, i}
+        <!-- content here -->
+        {#if i === current}
+          <svg class="current">
+            <circle cx="6" cy="6" r="3" />
+          </svg>
+        {:else}
+          <svg>
+            <circle cx="6" cy="6" r="2" />
+          </svg>
+        {/if}
+      {/each}
+    {/if}
+  </button>
 {/if}

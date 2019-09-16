@@ -99,7 +99,7 @@ StyleGuide 6.TextButton
   <a
     class="TextButton"
     class:primary
-    class:warning={warning}
+    class:warning
     {disabled}
     {href}
     on:click={click}
@@ -110,7 +110,7 @@ StyleGuide 6.TextButton
   <button
     class="TextButton"
     class:primary
-    class:warning={warning}
+    class:warning
     {disabled}
     on:click={click}
     data-no-close={noClose}

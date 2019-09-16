@@ -1,7 +1,7 @@
 import got from "got";
 import { normalise } from "../../api/normalise-publication.js";
 import querystring from "querystring";
-const LIMIT = 10;
+const LIMIT = 25;
 export async function get(req, res, next) {
   const { page = 1, collection, reverse, orderBy } = req.query;
   if (req.user && req.session.profile && req.session.profile.id) {
@@ -40,6 +40,9 @@ export async function get(req, res, next) {
         json: true
       });
       response.body.items = response.body.items.map(normalise);
+      if (response.body.items.length === 0) {
+        response.body.done = true;
+      }
       return res.json(response.body);
     } catch (err) {
       res.status(500);
