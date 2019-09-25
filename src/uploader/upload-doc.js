@@ -1,5 +1,5 @@
 import queue from "async-es/queue";
-import { pdf } from "./pdf.js";
+// import { pdf } from "./pdf.js";
 import { epub } from "./epub/";
 import { writable } from "svelte/store";
 const { subscribe, set, update } = writable([]);
@@ -15,8 +15,8 @@ importQueue.error((err, task) => {
 async function create(file) {
   // file can either be an actual file or an object describing an Article with a type: 'Article'
   switch (file.type) {
-    case "application/pdf":
-      return pdf(file);
+    // case "application/pdf":
+    //   return pdf(file);
     case "application/epub+zip":
       return epub(file);
     default:
@@ -43,8 +43,7 @@ function add(file) {
     return [...set];
   });
   importQueue.push(file, function(err) {
-    console.log(err);
-    set([]);
+    if (err) console.log(err);
   });
 }
 

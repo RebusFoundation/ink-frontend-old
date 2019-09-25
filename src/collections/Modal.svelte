@@ -20,7 +20,13 @@
   let name = "";
   function update() {
     fetch(`/recent.json`)
-      .then(response => response.json())
+      .then(response => {
+        if (response.ok) {
+          return response.json()
+        } else {
+          return {}
+        }
+      })
       .then(json => {
         collections.set(json.tags);
       });

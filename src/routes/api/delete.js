@@ -1,8 +1,8 @@
 import got from "got";
 export async function post(req, res, next) {
-  if (req.user && req.session.profile) {
+  if (req.user && req.user.profile) {
     try {
-      const response = await got.post(req.session.profile.outbox, {
+      const response = await got.post(req.user.profile.outbox, {
         headers: {
           "content-type": "application/ld+json",
           Authorization: `Bearer ${req.user.token}`

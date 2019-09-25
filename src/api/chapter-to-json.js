@@ -223,8 +223,8 @@ function getPath(path, base) {
 }
 
 function assetPath(path, base) {
-  const url = new URL(path, base).href;
-  return `/assets/${encodeURIComponent(url)}`;
+  const url = new URL(path, base);
+  return `/assets${url.pathname}`;
 }
 
 function linkPath(path, base) {

@@ -31,6 +31,6 @@
 
 <details class="Recent" open>
   <summary>Recently Imported</summary>
-  <Button href="/library/all">See All</Button>
+  <Button href="/collections/all">See All</Button>
   <List list={recent.items} />
 </details>

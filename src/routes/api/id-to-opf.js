@@ -14,11 +14,11 @@ export async function get(req, res, next) {
       },
       json: true
     });
-    const book = response.body;
+    const book = normalise(response.body);
     const opf = book.resources.find(
       item => item.encodingFormat === "application/oebps-package+xml"
     );
-    if (opf.url === "original.opf") {
+    if (opf.url.endsWith("original.opf")) {
       return res.json(normalise(book));
     } else {
       const url = new URL(opf.url, process.env.API_SERVER);
@@ -34,6 +34,8 @@ export async function get(req, res, next) {
           json: false
         });
         body = await response.body;
+      } else if (redirect.statusCode === 404) {
+        return res.json(normalise(book));
       } else {
         return res.sendStatus(404);
       }

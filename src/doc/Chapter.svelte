@@ -103,113 +103,142 @@
   }
   :global(.Chapter > *) {
     grid-column: 2 / 3;
+    margin: 0 auto;
+    max-width: 100%;
+  }
+  :global(.Bookmarked) {
+    position: relative;
+  }
+  :global(.Bookmarked)::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    margin-left: -50vw;
+    display: block;
+    top: 0;
+    height: 2.5rem;
+    border-left: 0.75rem solid #b4312e;
+    border-bottom: 0.75rem solid transparent;
+  }
+  :global(.Highlight.Commented) {
+    position: relative;
+  }
+  :global(.Highlight.Commented)::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    margin-left: -50vw;
+    display: block;
+    top: 0;
+    height: 1.25rem;
+    border-left: 1.25rem solid #b4312e;
   }
 
-  .Chapter :global(.Highlight) {
+  :global(.Chapter .Highlight) {
     background-color: #ffff98;
   }
 
-  .Chapter :global(.Highlight--selected) {
+  :global(.Chapter .Highlight--selected) {
     background-color: #ddddd0;
   }
 
-  .Chapter :global([hidden]),
-  .Chapter :global(template) {
+  :global(.Chapter [hidden]),
+  :global(.Chapter template) {
     display: none !important;
   }
-  .Chapter :global(head) {
+  :global(.Chapter head) {
     display: none;
   }
 
-  .Chapter :global(blockquote) {
+  :global(.Chapter blockquote) {
     margin-left: 2.5em;
   }
 
-  .Chapter :global(blockquote),
-  .Chapter :global(blockquote p) {
+  :global(.Chapter blockquote),
+  :global(.Chapter blockquote p) {
     font-size: 0.75rem;
     font-size: calc(var(--reader-font-size) * 0.85);
     line-height: 1.2;
   }
 
-  .Chapter :global(blockquote * + *) {
+  :global(.Chapter blockquote * + *) {
     margin-top: calc(var(--reader-paragraph-spacing) * 0.85);
   }
-  .Chapter :global(blockquote *) {
+  :global(.Chapter blockquote *) {
     margin-bottom: 0;
   }
-  .Chapter :global(blockquote :first-child) {
+  :global(.Chapter blockquote :first-child) {
     margin: 0;
   }
-  .Chapter :global(h1) {
+  :global(.Chapter h1) {
     font-size: 2em;
     font-size: calc(var(--reader-font-size) * 3);
     font-weight: 600;
     margin: 0;
   }
 
-  .Chapter :global(h2) {
+  :global(.Chapter h2) {
     font-weight: 600;
     font-size: calc(var(--reader-font-size) * 2);
     margin: 0;
   }
-  .Chapter :global(h3) {
+  :global(.Chapter h3) {
     font-weight: 400;
     font-style: italic;
     font-size: calc(var(--reader-font-size) * 1.5);
     margin: 0;
   }
-  .Chapter :global(h4) {
+  :global(.Chapter h4) {
     font-weight: normal;
     font-size: calc(var(--reader-font-size) * 1.25);
     margin: 0;
   }
-  .Chapter :global(h5) {
+  :global(.Chapter h5) {
     font-weight: normal;
     font-size: var(--reader-font-size);
     text-transform: uppercase;
     margin: 0;
   }
 
-  .Chapter :global(h6) {
+  :global(.Chapter h6) {
     font-weight: normal;
     font-size: var(--reader-font-size);
     margin: 0;
   }
 
-  .Chapter :global(h1),
-  .Chapter :global(h2),
-  .Chapter :global(h3),
-  .Chapter :global(h4),
-  .Chapter :global(h5),
-  .Chapter :global(h6) {
+  :global(.Chapter h1),
+  :global(.Chapter h2),
+  :global(.Chapter h3),
+  :global(.Chapter h4),
+  :global(.Chapter h5),
+  :global(.Chapter h6) {
     margin: 0;
   }
 
-  .Chapter :global(p),
-  .Chapter :global(td),
-  .Chapter :global(figure),
-  .Chapter :global(figcaption) {
+  :global(.Chapter p),
+  :global(.Chapter td),
+  :global(.Chapter figure),
+  :global(.Chapter figcaption) {
     line-height: var(--reader-line-height);
     font-size: 0.85rem;
     font-size: var(--reader-font-size, 0.85rem);
   }
 
-  .Chapter :global(a[href]) {
+  :global(.Chapter a[href]) {
     transition: box-shadow 0.1s cubic-bezier(0.9, 0.03, 0.69, 0.22),
       transform 0.1s cubic-bezier(0.9, 0.03, 0.69, 0.22);
     text-decoration: underline;
   }
-  .Chapter :global(:link) {
+  :global(.Chapter :link) {
     color: var(--link);
   }
-  .Chapter :global(:visited) {
+  :global(.Chapter :visited) {
     color: var(--visited);
   }
-  .Chapter :global(a:link:hover) {
+  :global(.Chapter a:link:hover) {
     color: var(--hover);
   }
-  .Chapter :global(a) {
+  :global(.Chapter a) {
     border-radius: 2rem;
   }
   @keyframes readableChapterPop {
@@ -228,30 +257,30 @@
       transform: scale(1);
     }
   }
-  .Chapter :global(a:focus) {
+  :global(.Chapter a:focus) {
     background-color: var(--rc-lighter);
     box-shadow: 0 0 0 5px var(--rc-lighter);
     outline: solid transparent;
     animation: readableChapterPop 0.25s ease-in-out;
   }
 
-  .Chapter :global(a:link:active) {
+  :global(.Chapter a:link:active) {
     color: var(--active);
   }
-  .Chapter :global(b),
-  .Chapter :global(strong),
-  .Chapter :global(b > *),
-  .Chapter :global(strong > *) {
+  :global(.Chapter b),
+  :global(.Chapter strong),
+  :global(.Chapter b > *),
+  :global(.Chapter strong > *) {
     font-weight: 600;
   }
-  .Chapter :global(svg),
-  .Chapter :global(img) {
+  :global(.Chapter svg),
+  :global(.Chapter img) {
     max-height: 88vh;
     width: auto;
     height: auto;
     max-width: 100%;
   }
-  .Chapter :global(.is-current) {
+  :global(.Chapter .is-current) {
     background-color: #f9f9f9;
     box-shadow: 0 0 0 0.25rem #f9f9f9;
   }

@@ -3,27 +3,26 @@
   import TextButton from "./TextButton.svelte";
   import { book as item, current } from "../stores/book.js";
   import { collections } from "../collections/store.js";
-  import {collection} from '../api/collection.js'
+  import { collection } from "../api/collection.js";
   export let modal;
   let book = { navigation: { current: {} } };
   $: if ($item.id && $item.id !== book.id) {
     updateBook($item.id);
   }
-  let bookTags = []
+  let bookTags = [];
   $: if (book.tags) {
-    bookTags = book.tags.map(tag => tag.id)
-    console.log(bookTags)
+    bookTags = book.tags.map(tag => tag.id);
   }
   async function updateBook(id) {
-    book = { navigation: { current: {} } };
+    book = { navigation: { current: {} }, json: {}, readingOrder: [{}] };
     const response = await fetch(`/api/book?url=${encodeURIComponent(id)}`);
     book = await response.json();
     return book;
   }
   let checkboxes = {};
 
-  function handleCollection (tag, input) {
-    collection(tag, $item, input.checked)
+  function handleCollection(tag, input) {
+    collection(tag, $item, input.checked);
   }
 </script>
 
@@ -95,6 +94,9 @@
     margin-bottom: 0;
     text-align: left;
     padding: 0 1rem;
+    margin: 1rem auto;
+    min-width: 250px;
+    max-width: 450px;
   }
   .CollectionsList {
   }
@@ -106,8 +108,7 @@
     padding: 0.25rem 1rem;
   }
   .CollectionsList label.checked {
-    background-color: var(--link);
-    color: white;
+    font-weight: 600;
   }
   .CollectionsList label:hover {
     background-color: var(--hover);
@@ -131,6 +132,7 @@
       position: relative;
       background: none;
       border-color: white;
+      background: var(--rc-darker);
     }
     input[type="checkbox"]:checked::after {
       position: absolute;
@@ -168,6 +170,7 @@
   <h1>{$item.name}</h1>
 {/if}
 <ol>
+{#if book.json.epubVersion}
   <li>
     <a
       class:item={true}
@@ -177,6 +180,27 @@
       {book.position ? 'Continue' : 'Read'}
     </a>
   </li>
+  <li>
+    <a
+      href="/assets{new window.URL(book.id + 'original.epub').pathname}">
+      Download original
+    </a>
+  </li>
+  {:else if  book.readingOrder[0] && book.readingOrder[0].url}
+  <li>
+    <a
+      href="/assets{new window.URL(book.readingOrder[0].url).pathname}">
+      Download original
+    </a>
+  </li>
+  {:else}
+  <li>
+    <a
+      href="/">
+      Download original
+    </a>
+  </li>
+{/if}
   <li class="first-item">
     <a
       href="{$item.url}metadata"

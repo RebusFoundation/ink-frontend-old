@@ -1,15 +1,11 @@
 // import express from "express";
 import passport from "passport";
 import jwt from "jsonwebtoken";
-import csurf from "csurf";
-import dotenv from "dotenv";
+import got from "got";
 // import ms from 'ms'
 import debugSetup from "debug";
+import Auth0Strategy from "passport-auth0";
 const debug = debugSetup("vonnegut:auth");
-const result = dotenv.config();
-if (result.error) {
-  throw result.error;
-}
 function generateToken(user) {
   const expiresIn = "30m";
   return jwt.sign({ sub: user.id }, process.env.SECRETORKEY, {
@@ -20,6 +16,42 @@ function generateToken(user) {
   });
 }
 
+async function deserialise (user) {
+  if (!user.token) {
+    user.token = generateToken(user);
+  } else if (user.token) {
+    jwt.verify(
+      user.token,
+      process.env.SECRETORKEY,
+      {
+        algorithm: "HS256",
+        audience: process.env.AUDIENCE,
+        issuer: process.env.ISSUER
+      },
+      (err, decoded) => {
+        if (err && err.name === "TokenExpiredError") {
+          user.token = generateToken(user);
+        } else if (err) {
+          debug(err);
+          throw err;
+        }
+      }
+    );
+  }
+  if (!user.profile) {
+    const response = await got(`${process.env.API_SERVER}whoami`, {
+      headers: {
+        Authorization: `Bearer ${user.token}`
+      },
+      json: true
+    });
+    const { id, outbox } = response.body;
+    user.profile = { id, outbox };
+
+  }
+  return user
+}
+
 export function setup(app) {
   passport.serializeUser((user, done) => {
     // console.log('serialise: ', user)
@@ -27,35 +59,27 @@ export function setup(app) {
   });
   passport.deserializeUser((user, done) => {
     // console.log('deserialise: ', user)
-    if (!user.token) {
-      user.token = generateToken(user);
-      done(null, user);
-    } else if (user.token) {
-      jwt.verify(
-        user.token,
-        process.env.SECRETORKEY,
-        {
-          algorithm: "HS256",
-          audience: process.env.AUDIENCE,
-          issuer: process.env.ISSUER
-        },
-        (err, decoded) => {
-          if (err && err.name === "TokenExpiredError") {
-            user.token = generateToken(user);
-            done(null, user);
-          } else if (err) {
-            debug(err);
-            return done(err);
-          } else {
-            return done(null, user);
-          }
-        }
-      );
-    }
+    return deserialise(user)
+      .then(user => done(null, user))
+      .catch(err => done(err))
   });
   app.use(passport.initialize());
   app.use(passport.session());
   if (process.env.PASSPORT_STRATEGY === "auth0") {
+    passport.use(
+      new Auth0Strategy(
+        {
+          domain: process.env.AUTH0_DOMAIN,
+          clientID: process.env.AUTH0_CLIENT_ID,
+          clientSecret: process.env.AUTH0_CLIENT_SECRET,
+          callbackURL: process.env.CALLBACK_URL,
+          state: false
+        },
+        (accessToken, refreshToken, extraParams, profile, done) => {
+          return done(null, {id: profile.id});
+        }
+      )
+    );
     app.get("/callback", passport.authenticate("auth0", {}), function(
       req,
       res,
@@ -76,16 +100,11 @@ export function setup(app) {
     req.session = null;
     req.logout();
     let redirect;
-    if (process.env.PASSPORT_STRATEGY === "auth0") {
-      redirect = `https://${process.env.AUTH0_DOMAIN}/v2/logout?client_id=${process.env.AUTH0_CLIENT_ID}&returnTo=/`;
+    if (process.env.PASSPORT_STRATEGY === "auth0" && process.env.SIGNOUTURL) {
+      redirect = `https://${process.env.AUTH0_DOMAIN}/v2/logout?client_id=${process.env.AUTH0_CLIENT_ID}&returnTo=${process.env.SIGNOUTURL}`;
     } else {
       redirect = "/";
     }
     res.redirect(redirect);
-  });
-  app.use(csurf());
-  app.use((req, res, next) => {
-    res.cookie("XSRF-TOKEN", req.csrfToken());
-    next();
   });
 }

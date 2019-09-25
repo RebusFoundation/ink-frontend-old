@@ -46,7 +46,7 @@ export async function cleanCSS(text, url) {
       if (
         styles[styles[prop]] &&
         typeof styles[styles[prop]] === "string" &&
-        testProp(styles[prop])
+        testProp(styles[prop], styles[styles[prop]])
       ) {
         output.push(styles[prop] + ":" + styles[styles[prop]] + ";");
       }

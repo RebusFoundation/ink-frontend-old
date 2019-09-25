@@ -1,48 +1,20 @@
 <script context="module">
+  import {preload as _preload} from './_preload.js'
   // your script goes here
-  export async function preload({ params, query }) {
-    try {
-      const { id, path } = params;
-      const response = await this.fetch(
-        `/api/id-to-opf?id=%2F${encodeURIComponent(id)}`,
-        {
-          credentials: "include"
-        }
-      );
-      const book = await response.json();
-      const chapterResource = book.resources.find(item =>
-        item.url.endsWith(path.join("/"))
-      );
-      chapterResource.index = book.readingOrder
-        .map(item => item.url)
-        .indexOf(chapterResource.url);
-      const chapterResponse = await this.fetch(
-        `/api/parse-chapter?chapter=${encodeURIComponent(
-          chapterResource.url
-        )}&index=${chapterResource.index}`,
-        { credentials: "include" }
-      );
-      let chapter = await chapterResponse.json();
-      chapter = { ...chapter, ...chapterResource };
-      book.url = book.id;
-      book.id = id;
-      return { book, chapter };
-    } catch (err) {
-      return this.error(err);
-    }
-  }
+  export const preload = _preload
 </script>
 
 <script>
-  import { onMount, tick } from "svelte";
-  import { slide } from "svelte/transition";
+  import { onMount, tick, onDestroy } from "svelte";
   import Chapter from "../../../doc/Chapter.svelte";
   import Navbar from "../../../doc/Navbar.svelte";
   import Progress from "../../../doc/Progress.svelte";
   import BookContents from "../../../doc/BookContents.svelte";
   import Toolbar from "../../../components/Toolbar.svelte";
+  import Button from "../../../components/Button.svelte";
   import InfoActions from "../../../components/InfoActions.svelte";
   import { read } from "../../../api/read.js";
+  import {handleHighlight, highlightNotes}  from "./_handleHighlight.js"
   import {
     book as bookStore,
     chapter as chapterStore,
@@ -52,7 +24,8 @@
     theme,
     fontSize,
     chapterTitle,
-    configuringReader
+    configuringReader,
+    notes
   } from "../../../doc/stores.js";
   function handleCurrent({ detail }) {
     currentLocation.set({
@@ -73,6 +46,9 @@
       `var(--${$theme}-fonts)`
     );
   }
+  $: if (bookBody && $notes.items) {
+    highlightNotes(bookBody, $notes)
+  }
   export let book;
   export let chapter;
   $: if (book) {
@@ -82,7 +58,6 @@
     chapterStore.set(chapter);
   }
   let width = 0;
-  $: console.log($bookStore.position);
   let sidebar = true;
   let sidebargrid = true;
   let sidebarWidth;
@@ -109,25 +84,35 @@
       if (location) {
         location.scrollIntoView({ behavior: "smooth" });
       }
-    }
-    return () => {
-      const url = $bookStore.url;
+    };
+  });
+  onDestroy(() => {
       const location = $currentLocation.location;
       const chapter = $chapterStore.url;
+      const url = new URL(`/${$bookStore.id}/`, $chapterStore.url).href
 
       read(url, location, chapter);
       window.lifecycle.removeEventListener("statechange", handleLifeCycle);
-    };
-  });
+    })
   function handleLifeCycle(event) {
     if (
       window.lifecycle.state === "passive" &&
       event.oldState === "active" &&
       $currentLocation
     ) {
-      read($bookStore.url, $currentLocation.location, $chapterStore.url);
+      const url = new URL(`/${$bookStore.id}/`, $chapterStore.url).href
+      read(url, $currentLocation.location, $chapterStore.url);
     }
   }
+  let selectionRange = null
+  document.addEventListener('selectionchange', () => {
+    const selection = document.getSelection()
+    if (selection && !selection.isCollapsed) {
+      selectionRange = selection.getRangeAt(0)
+    } else {
+      selectionRange = null
+    }
+  });
 </script>
 
 <style>
@@ -281,10 +266,7 @@
     {#if sidebar}
       <div
         bind:clientWidth={sidebarWidth}
-        class="Sidebar"
-        transition:slide={{ delay: 250, duration: 300 }}
-        on:introstart={() => (sidebargrid = true)}
-        on:outroend={() => (sidebargrid = false)}>
+        class="Sidebar">
         <BookContents modal={false} />
       </div>
     {/if}
@@ -298,6 +280,7 @@
           {width}
           on:toggle-sidebar={() => {
             sidebar = !sidebar;
+            sidebargrid = !sidebargrid
           }} />
       </span>
       <span slot="toolbar-title">
@@ -402,7 +385,6 @@
               </option>
             </select>
           </label>
-
         {:else}{book.name}{/if}
       </span>
       <span slot="right-button">
@@ -427,7 +409,13 @@
     {/each}
 
     {#if $navigation}
-      <Navbar navigation={$navigation} />
+      <Navbar navigation={$navigation}>
+      {#if selectionRange}
+         <Button click={() => {
+           handleHighlight(selectionRange, bookBody, chapter)
+         }}>Highlight</Button>
+      {/if}
+      </Navbar>
     {:else}
       <Navbar />
     {/if}

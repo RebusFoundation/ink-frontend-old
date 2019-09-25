@@ -4,7 +4,7 @@ import querystring from "querystring";
 const LIMIT = 25;
 export async function get(req, res, next) {
   const { page = 1, collection, reverse, orderBy } = req.query;
-  if (req.user && req.session.profile && req.session.profile.id) {
+  if (req.user && req.user.profile && req.user.profile.id) {
     try {
       let url;
       if (collection === "all") {
@@ -18,7 +18,7 @@ export async function get(req, res, next) {
         if (reverse !== "false") {
           query.reverse = reverse;
         }
-        url = `${req.session.profile.id}/library?${querystring.encode(query)}`;
+        url = `${req.user.profile.id}/library?${querystring.encode(query)}`;
       } else {
         const query = {
           page,
@@ -31,7 +31,7 @@ export async function get(req, res, next) {
         if (reverse !== "false") {
           query.reverse = reverse;
         }
-        url = `${req.session.profile.id}/library?${querystring.encode(query)}`;
+        url = `${req.user.profile.id}/library?${querystring.encode(query)}`;
       }
       const response = await got(url, {
         headers: {

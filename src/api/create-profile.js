@@ -1,4 +1,4 @@
-import { fetchWrap, get } from "./fetch-wrap.js";
+import { fetchWrap } from "./fetch-wrap.js";
 
 export async function create(session) {
   const newReader = {
@@ -6,7 +6,7 @@ export async function create(session) {
     summary: `Reader profile`
   };
   try {
-    const response = await fetchWrap(session.profile.create, {
+    await fetchWrap(session.profile.create, {
       method: "POST",
       body: JSON.stringify(newReader),
       headers: new window.Headers({
@@ -14,14 +14,10 @@ export async function create(session) {
         "content-type": "application/ld+json"
       })
     });
-    const url = new URL(
-      response.headers.get("location"),
-      session.profile.create
-    );
-    const reader = await get(
-      `/api/get?path=${encodeURIComponent(url.pathname)}`
-    );
-    return reader;
+    const reader = await window.fetch("/api/whoami", {
+      credentials: "include"
+    });
+    return reader.json();
   } catch (err) {
     err.httpMethod = "POST/Create Profile";
     throw err;

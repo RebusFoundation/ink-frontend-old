@@ -1,5 +1,6 @@
 import got from "got";
 export async function get(req, res, next) {
+  res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
   const data = { user: req.user };
   if (req.user) {
     try {
@@ -18,6 +19,8 @@ export async function get(req, res, next) {
       };
     }
   }
-  req.session.profile = data.profile;
+  const newSession = {...req.session}
+  newSession.profile = data.profile
+  req.session = newSession;
   return res.json(data);
 }

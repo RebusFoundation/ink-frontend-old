@@ -4,8 +4,11 @@
 yarn-error.log
 /cypress/screenshots/
 /__sapper__/
+/functions/__sapper__/
 /static/js/
+/.firebase/
 <<<<<<< HEAD
 .env
 =======
 >>>>>>> 85d27363f4640bf2a715a690f49c8b843cb26c40
+functions/.runtimeconfig.json

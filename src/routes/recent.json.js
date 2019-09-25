@@ -1,9 +1,10 @@
 import got from "got";
 import { normalise } from "../api/normalise-publication.js";
 export async function get(req, res, next) {
-  if (req.user && req.session.profile && req.session.profile.id) {
+  // console.log('recent: ', req.user, req.user.profile)
+  if (req.user && req.user.profile && req.user.profile.id) {
     try {
-      const response = await got(`${req.session.profile.id}/library?limit=10`, {
+      const response = await got(`${req.user.profile.id}/library?limit=10`, {
         headers: {
           Authorization: `Bearer ${req.user.token}`
         },

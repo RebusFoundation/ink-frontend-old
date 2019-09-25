@@ -1,11 +1,19 @@
 import sirv from "sirv";
 import httpStrategies from "passport-http";
 import passport from "passport";
+import dotenv from "dotenv";
+import csurf from "csurf";
 // import * as fs from "fs";
 // import * as https from "https";
 
 const { PORT, NODE_ENV } = process.env;
 const dev = NODE_ENV === "development";
+if (dev) {
+  const result = dotenv.config();
+  if (result.error) {
+    throw result.error;
+  }
+}
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 // const options = {
 //   key: fs.readFileSync("./dev/localhost.key"),
@@ -18,7 +26,7 @@ export function devServer(app, sapper) {
   passport.use(
     new httpStrategies.BasicStrategy((username, password, callback) => {
       if (password === "devpassword") {
-        const user = { id: `private|${username}` };
+        const user = { id: `dev-testing11|${username}` };
         return callback(null, user);
       } else {
         return callback(null, false);
@@ -28,6 +36,17 @@ export function devServer(app, sapper) {
   app.use(
     sirv("dev-static", { dev }),
     sirv("static", { dev }),
+    (req, res, next) => {
+      if (req.path === '/callback') {
+        return next()
+      } else {
+        return csurf()(req, res, next)
+      }
+    },
+    (req, res, next) => {
+      res.cookie("XSRF-TOKEN", req.csrfToken());
+      next();
+    },
 
     sapper.middleware({
       session: (req, res) => {

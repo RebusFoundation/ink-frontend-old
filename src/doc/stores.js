@@ -23,6 +23,22 @@ export const contents = derived(book, ($book, set) => {
     set({});
   }
 });
+export const notes = derived(chapter, ($chapter, set) => {
+  try {
+    if ($chapter.url) {
+      window
+        .fetch(`/api/notes?path=${encodeURIComponent($chapter.url)}`)
+        .then(response => response.json())
+        .then(notesData => set(notesData));
+    } else {
+      set({})
+    }
+  } catch (err) {
+    set({});
+    console.error(err);
+  }
+  
+})
 
 export const navigation = derived([book, chapter], ([$book, $chapter]) => {
   let previous;

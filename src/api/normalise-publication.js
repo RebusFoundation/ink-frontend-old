@@ -18,7 +18,7 @@ export function normalise(pub) {
     resource.rel.includes("cover")
   );
   if (coverResource) {
-    pub.cover = `/assets/${encodeURIComponent(coverResource.url)}`;
+    pub.cover = `/assets${new URL(coverResource.url).pathname}`;
   } else {
     pub.cover = "/placeholder-cover.jpg";
   }

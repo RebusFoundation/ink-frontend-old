@@ -12,7 +12,8 @@ const purifyConfig = {
 };
 
 export async function get(req, res, next) {
-  const { url } = req.params;
+  const { path } = req.params;
+  const url = new URL(path.join("/"), process.env.API_SERVER).href
   res.set("Cache-Control", "max-age=31536000, immutable");
   if (req.user) {
     try {
@@ -42,7 +43,9 @@ export async function get(req, res, next) {
         res.send(result);
       } else if (
         response.headers["content-type"].includes("image") ||
-        response.headers["content-type"].includes("video")
+        response.headers["content-type"].includes("video") ||
+        response.headers["content-type"].includes("application/epub+zip") ||
+        response.headers["content-type"].includes("application/pdf")
       ) {
         return got.stream(redirect.headers.location).pipe(res);
       } else {

@@ -11,7 +11,7 @@
         resource.rel.includes("cover")
       );
       if (coverResource) {
-        item.cover = `/assets/${encodeURIComponent(coverResource.url)}`;
+        item.cover = `/assets${new window.URL(coverResource.url).pathname}`;
       } else {
         item.cover = "/placeholder-cover.jpg";
       }
@@ -48,7 +48,9 @@
 </style>
 
 <div class="List {layout}">
+{#if list}
   {#each list as item}
     <Item {layout} {...item} />
   {/each}
+{/if}
 </div>

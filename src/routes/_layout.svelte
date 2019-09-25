@@ -7,6 +7,7 @@
   import Modal from "../collections/Modal.svelte";
   import ItemActions from "../library/ItemActions.svelte";
   import ContentsModal from "../doc/ContentsModal.svelte";
+  import NoteModal from "../doc/NoteModal.svelte";
   export let segment;
 </script>
 
@@ -24,15 +25,16 @@
 </style>
 
 <Login />
-<Profile />
 <Modal />
 <ItemActions />
 <ContentsModal />
-
-{#if !$profile.loading}
+<NoteModal />
+{#if $profile.profile && $profile.profile.status !== 200 && !$profile.loading}
+  <Profile />
+{:else if $profile.loading}
+  <Loading />
+{:else}
   <main>
     <slot />
   </main>
-{:else}
-  <Loading />
 {/if}

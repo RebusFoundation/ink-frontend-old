@@ -1,12 +1,10 @@
 import express from "express";
-import passport from "passport";
 import compression from "compression";
 import * as sapper from "@sapper/server";
-import Auth0Strategy from "passport-auth0";
 import cookieSession from "cookie-session";
-import sirv from "sirv";
 import { setup } from "./auth.js";
 import { devServer } from "./dev-server.js";
+import cookieParser from 'cookie-parser'
 import csurf from "csurf";
 // import debugSetup from 'debug'
 // const debug = debugSetup('vonnegut:server')
@@ -32,13 +30,15 @@ app.use(
   })
 );
 app.use(compression({ threshold: 0 }));
+app.use(cookieParser())
 
 app.use(
   cookieSession({
-    name: "sod",
+    name: "__session",
     keys: [process.env.COOKIE_KEY],
     secure: !dev,
-    signed: true,
+    signed: false,
+    httpOnly: true,
     maxAge: 30 * 24 * 60 * 60 * 1000
   })
 );
@@ -49,31 +49,23 @@ app.use(function(req, res, next) {
   }
   next();
 });
-app.use(csurf());
-
-if (process.env.PASSPORT_STRATEGY === "auth0") {
-  passport.use(
-    new Auth0Strategy(
-      {
-        domain: process.env.AUTH0_DOMAIN,
-        clientID: process.env.AUTH0_CLIENT_ID,
-        clientSecret: process.env.AUTH0_CLIENT_SECRET,
-        callbackURL: process.env.CALLBACK_URL
-      },
-      (accessToken, refreshToken, extraParams, profile, done) => {
-        return done(null, profile);
-      }
-    )
-  );
-}
 setup(app);
-
 if (dev) {
   devServer(app, sapper);
 } else {
   app.use(
-    sirv("static", { dev }),
-
+    "/",
+    (req, res, next) => {
+      if (req.path === '/callback') {
+        return next()
+      } else {
+        return csurf()(req, res, next)
+      }
+    },
+    (req, res, next) => {
+      res.cookie("XSRF-TOKEN", req.csrfToken());
+      next();
+    },
     sapper.middleware({
       session: (req, res) => {
         let profile;
@@ -89,6 +81,6 @@ if (dev) {
   );
 }
 
-export { sapper };
+export { sapper, app };
 
 // Need to set this up to actually use https.

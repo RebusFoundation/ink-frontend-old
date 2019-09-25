@@ -2,7 +2,11 @@
   import { onMount } from "svelte";
   import { stores } from "@sapper/app";
   import { create } from "../api/create-profile.js";
-  import { profile } from "../routes/_profile.js";
+  import { profile as profileStore } from "../routes/_profile.js";
+  let profile = {}
+  $: if ($profileStore.profile) {
+    profile = $profileStore.profile
+  }
 </script>
 
 <style>
@@ -45,8 +49,8 @@
 </style>
 
 <!-- markup (zero or more items) goes here -->
-{#if $profile && $profile.profile && $profile.profile.status === 404}
-  <div class="TwoUp">
+{#if profile.status !== 200 && !$profileStore.loading}
+  <div class="TwoUp" data-status={profile.status}>
     <div class="Card">
       <h2 id="modal-1-title" class="Modal-title">
         Do you want to create a Rebus Ink account?
@@ -70,12 +74,12 @@
           <p>
             <button
               class="Button"
-              on:click={event => {
-                event.target.disable = 'true';
+              on:click={async event => {
+                event.target.disabled = 'true';
                 event.target.setAttribute('working', 'true');
-                create($profile).then(profile => {
-                  profile.set({ profile, user: $profile.user });
-                });
+                const newProfile = await create($profileStore)
+                profileStore.set({ profile: newProfile.profile, user: newProfile.user, loading: false });
+                profile = newProfile.profile
               }}>
               Yes, create an account
             </button>

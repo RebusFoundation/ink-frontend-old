@@ -5,41 +5,41 @@ export async function collection(tag, book, checked) {
   const response = await window.fetch("/api/whoami", {
     credentials: "include"
   });
-  let payload
+  let payload;
   if (checked) {
     payload = {
       "@context": [
         "https://www.w3.org/ns/activitystreams",
         { reader: "https://rebus.foundation/ns/reader" }
       ],
-      type: 'Add',
+      type: "Add",
       object: {
-        type: 'reader:Tag',
+        type: "reader:Tag",
         id: tag.id,
         name: tag.name
       },
       target: {
-        type: 'Publication',
+        type: "Publication",
         id: book.id
       }
-    }
+    };
   } else {
     payload = {
       "@context": [
         "https://www.w3.org/ns/activitystreams",
         { reader: "https://rebus.foundation/ns/reader" }
       ],
-      type: 'Remove',
+      type: "Remove",
       object: {
-        type: 'reader:Tag',
+        type: "reader:Tag",
         id: tag.id,
         name: tag.name
       },
       target: {
-        type: 'Publication',
+        type: "Publication",
         id: book.id
       }
-    }
+    };
   }
   try {
     const csrfToken = getToken();

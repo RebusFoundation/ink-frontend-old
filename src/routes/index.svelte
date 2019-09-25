@@ -1,7 +1,7 @@
 <script context="module">
   export async function preload(page, session) {
     let recent;
-    if (session.profile) {
+    if (session.profile && session.profile.status !== 404) {
       recent = await this.fetch(`/recent.json`, { credentials: "include" })
         .then(response => response.json())
         .catch(err => this.error(err));
@@ -27,7 +27,13 @@
   }
   $: if ($uploadQueue) {
     fetch(`/recent.json`)
-      .then(response => response.json())
+      .then(response => {
+        if (response.ok) {
+          return response.json()
+        } else {
+          return {}
+        }
+      })
       .then(json => {
         recent = json;
       });

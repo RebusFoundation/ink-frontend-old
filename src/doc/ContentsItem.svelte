@@ -3,8 +3,10 @@
   export let current = false;
   export let indent = 0;
   let isCurrent = false;
-  $: if (current && item.url && item.url.includes(new URL(current).pathname)) {
-    isCurrent = true;
+  $: if (current && item.url) {
+    if (item.url.includes(new URL(current, window.location).pathname)) {
+      isCurrent = true;
+    }
   }
 </script>
 
@@ -58,6 +60,7 @@
   }
   .current {
     background-color: white;
+    color: var(--link);
   }
   :global(.BookContents.modal) .current {
     background-color: #f7f7f7;

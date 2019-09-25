@@ -5,6 +5,7 @@
   export let href = false;
   export let click = () => {};
   export let noClose = null;
+  export let close = null;
   export let warning = false;
 </script>
 
@@ -103,7 +104,8 @@ StyleGuide 6.TextButton
     {disabled}
     {href}
     on:click={click}
-    data-no-close={noClose}>
+    data-no-close={noClose}
+    data-close-modal={close}>
     <slot />
   </a>
 {:else}
@@ -114,6 +116,7 @@ StyleGuide 6.TextButton
     {disabled}
     on:click={click}
     data-no-close={noClose}
+    data-close-modal={close}
     type="Button">
     <slot />
   </button>

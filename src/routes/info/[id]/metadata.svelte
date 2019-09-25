@@ -17,7 +17,6 @@
   import Toolbar from "../../../components/Toolbar.svelte";
   import { open } from "../../../actions/modal.js";
   import { book as item, current } from "../../../stores/book.js";
-  import { slide } from "svelte/transition";
   import InfoActions from "../../../components/InfoActions.svelte";
   export let book;
   let width = 0;
@@ -116,10 +115,7 @@
 <div class="Info" class:sidebar={sidebargrid}>
   {#if sidebar}
     <div
-      class="Sidebar"
-      transition:slide={{ delay: 250, duration: 300 }}
-      on:introstart={() => (sidebargrid = true)}
-      on:outroend={() => (sidebargrid = false)}>
+      class="Sidebar">
       <InfoActions modal={false} />
     </div>
   {/if}
@@ -147,6 +143,7 @@
         <button
           on:click={() => {
             sidebar = !sidebar;
+            sidebargrid = !sidebargrid;
           }}
           href="/"
           class="Toolbar-link">
